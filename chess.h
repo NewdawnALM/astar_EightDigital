@@ -8,14 +8,6 @@ using std::string;
 using std::vector;
 using std::ostream;
 
-enum DIRECT
-{
-    UP = 0,
-    DOWN,
-    LEFT,
-    RIGHT,
-    UNKOWN
-};
 
 class CChess
 {
@@ -38,6 +30,11 @@ public:
     const CChess *pparent;      // 必须指向实实际际存在的值！注意不要指向一个局部变量等！
     int iMoveFromLast;
     static const string directs[5];
+
+    enum DIRECT
+    {
+        UP, DOWN, LEFT, RIGHT, UNKOWN
+    };
 };
 
 #endif

@@ -7,11 +7,13 @@ LIBDIR = -L./tools
 LIBS = -ltools
 LINK = $(LIBDIR) $(LIBS)
 
+OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
+
 OUTPUT := game
 
 all: $(OUTPUT)
 
-game: main.o
+game: $(OBJS)
 	make -C tools
 	$(CC) -o $@ $^ $(LINK)
 
@@ -20,5 +22,5 @@ game: main.o
 
 clean:
 	make clean -C tools
-	rm -f *.o
+	rm -f $(OBJS)
 	rm -f $(OUTPUT)

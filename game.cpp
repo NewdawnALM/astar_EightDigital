@@ -23,7 +23,7 @@ vector<CChess> CGame::getNextChess(const CChess &nowChess)
 		up.iZeroIdx -= up.iCol;
 		++up.iSteps;
 		up.pparent = const_cast<CChess*>(&nowChess);
-		up.iMoveFromLast = DOWN;
+		up.iMoveFromLast = CChess::DOWN;
 		nextChess.push_back(up);
 	}
 	if(zeroIdx < nowChess.strState.size() - nowChess.iCol) {
@@ -32,7 +32,7 @@ vector<CChess> CGame::getNextChess(const CChess &nowChess)
 		down.iZeroIdx += down.iCol;
 		++down.iSteps;
 		down.pparent = const_cast<CChess*>(&nowChess);
-		down.iMoveFromLast = UP;
+		down.iMoveFromLast = CChess::UP;
 		nextChess.push_back(down);
 	}
 	if(zeroIdx % nowChess.iCol != 0) {
@@ -41,7 +41,7 @@ vector<CChess> CGame::getNextChess(const CChess &nowChess)
 		--left.iZeroIdx;
 		++left.iSteps;
 		left.pparent = const_cast<CChess*>(&nowChess);
-		left.iMoveFromLast = RIGHT;
+		left.iMoveFromLast = CChess::RIGHT;
 		nextChess.push_back(left);
 	}
 	if((zeroIdx + 1) % nowChess.iCol != 0) {
@@ -50,7 +50,7 @@ vector<CChess> CGame::getNextChess(const CChess &nowChess)
 		++right.iZeroIdx;
 		++right.iSteps;
 		right.pparent = const_cast<CChess*>(&nowChess);
-		right.iMoveFromLast = LEFT;
+		right.iMoveFromLast = CChess::LEFT;
 		nextChess.push_back(right);
 	}
 	return nextChess;
