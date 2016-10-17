@@ -1,6 +1,8 @@
 #include "chess.h"
 #include "exception.h"
 #include <cstring>
+#include <algorithm>
+using std::sort;
 
 int CChess::iLimitNum = 20;
 const string CChess::directs[5] = {"up", "down", "left", "right", "unkown"};
@@ -11,7 +13,9 @@ void CChess::check_row_col() const
         throw CException(1001, "行或列的值不能小于等于0！");
     }
     if(iRow * iCol > iLimitNum) {
-        throw CException(1002, "行列数的乘积不能超过10！");
+        char msg[100];
+        sprintf(msg, "行列数的乘积不能超过%d！", iLimitNum);
+        throw CException(1002, msg);
     }
     if(iRow * iCol != strState.size()) {
     	throw CException(1003, "行列数的乘积应该和字符串的相等！");
@@ -34,12 +38,17 @@ void CChess::check_value() const
     }
 }
 
-CChess::CChess(const string &state, int row, int col): strState(state),
-    iRow(row), iCol(col), iSteps(0), pparent(NULL), iMoveFromLast(UNKOWN)
+CChess::CChess(const string &state, int row, int col, const string &standard):
+    strState(state), iRow(row), iCol(col), iSteps(0), pparent(NULL),
+    iMoveFromLast(UNKOWN), strStandard(standard)
 {
     this->check_row_col();
 	iZeroIdx = strState.find('0');
     this->check_value();
+
+    if(strStandard == "") {
+        sort(strStandard.begin(), strStandard.end());
+    }
 }
 
 CChess::CChess(const vector<vector<char>> &vec2): iRow(vec2.size()), iCol(vec2.size() == 0 ? -1: vec2[0].size())
@@ -83,3 +92,27 @@ std::ostream& operator << (std::ostream &out, const CChess &oChess)
     out << "\n";
     return out;
 }
+
+int CChess::astar_f() const
+{
+    return iSteps;
+}
+
+int CChess::astar_g() const
+{
+    int notMatch = 0;
+    for(int i = 0; i < iRow; ++i) {
+        for(int j = 0; j < iCol; ++j) {
+            if(strState[i * iCol + j] != strStandard[i * iCol + j]) {
+                ++notMatch;
+            }
+        }
+    }
+    return notMatch;
+}
+
+int CChess::astar_h() const
+{
+    return astar_f() + astar_g();
+}
+

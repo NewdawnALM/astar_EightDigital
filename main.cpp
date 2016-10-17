@@ -64,7 +64,7 @@ int main(int argc, char const *argv[])
 					cout << game.vecSolve[i] << "\n";
 				}
 			} else {
-				cout << "sorry, your game can be solve, please input the other state.\n\n";
+				cout << "sorry, your game can't be solve, please input the other state.\n\n";
 			}
 			cout << " and the max states is: " << game.iMaxStates << "\n";
 			cout << " and the runtime is: " << game.lRunTime << "\n";

@@ -1,16 +1,34 @@
 #include "game.h"
+#include "timeval.h"
+#include "exception.h"
 #include <set>
 #include <queue>
 #include <algorithm>
 using std::set;
 using std::queue;
+using std::priority_queue;
 using std::swap;
 using std::max;
-#include "timeval.h"
+using std::sort;
 
 CGame::CGame(const CChess &_start, const CChess &_end): m_startChess(_start),
 	m_endChess(_end), bCanSolve(false), iSteps(0), vecSolve{},
-	iMaxStates(0), lRunTime(0) { }
+	iMaxStates(0), lRunTime(0)
+{
+	if(m_startChess.iRow != m_endChess.iRow) {
+		throw CException(2001, "开始字符串和结束字符串的行不相同！");
+	}
+	if(m_startChess.iCol != m_endChess.iCol) {
+		throw CException(2002, "开始字符串和结束字符串的列不相同！");
+	}
+	auto tmp_start = m_startChess.strState;
+	auto tmp_end = m_endChess.strState;
+	sort(tmp_start.begin(), tmp_start.end());
+	sort(tmp_end.begin(), tmp_end.end());
+	if(tmp_start != tmp_end) {
+		throw CException(2003, "开始字符串和结束字符串含有的字符有差别！");
+	}
+}
 
 vector<CChess> CGame::getNextChess(const CChess &nowChess)
 {
@@ -56,18 +74,26 @@ vector<CChess> CGame::getNextChess(const CChess &nowChess)
 	return nextChess;
 }
 
+struct priority_chess
+{
+	bool operator () (const CChess &lhs, const CChess &rhs) const
+	{
+		return lhs.astar_h() > rhs.astar_h();
+	}
+};
+
 void CGame::run()
 {
 	CTimeVal _time;
 
 	set<CChess> setChess;
 	setChess.insert(m_startChess);
-	queue<CChess> queChess;
+	priority_queue<CChess, vector<CChess>, priority_chess> queChess;
 	queChess.push(m_startChess);
 
 	while(!queChess.empty()) {
 		// 此处一定要用引用指向set中暂存的变量！不能是局部 变量，因为它的后继结点需要指向一个不会销毁的值！
-		const CChess &nowChess = *setChess.find(queChess.front());
+		const CChess &nowChess = *setChess.find(queChess.top());
 		queChess.pop();
 		if(nowChess == m_endChess) {
 			bCanSolve = true;
@@ -83,9 +109,16 @@ void CGame::run()
 		vector<CChess> nextChess = CGame::getNextChess(nowChess);
 		int len = nextChess.size();
 		for(int i = 0; i < len; ++i) {
-			if(setChess.find(nextChess[i]) == setChess.end()) {
+			auto chess_it = setChess.find(nextChess[i]);
+			if(chess_it == setChess.end()) {
 				queChess.push(nextChess[i]);
 				setChess.insert(nextChess[i]);
+			} else {
+				if(chess_it->astar_f() > nextChess[i].astar_f()) {
+					setChess.erase(chess_it);
+					setChess.insert(nextChess[i]);
+					queChess.push(nextChess[i]);
+				}
 			}
 		}
 		iMaxStates = max(iMaxStates, int(setChess.size()));
