@@ -19,5 +19,6 @@ game: main.o
 	$(CC) -o $@ -c $< $(COMOPT) $(INCLUDEDIR)
 
 clean:
+	make clean -C tools
 	rm -f *.o
 	rm -f $(OUTPUT)
