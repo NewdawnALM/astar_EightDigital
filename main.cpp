@@ -16,15 +16,21 @@ int main(int argc, char const *argv[])
 	// 	sleeptime = atoi(argv[1]);
 	// }
 
-	// CTimeVal st;
+	// CTimeVal _time;
 	// usleep(sleeptime MS);
-	// CTimeVal ed;
+	// cout << _time.costTime(CTimeVal::MICRO) << "\n";
 
-	// CTimeVal diff = st - ed;
-	// // CTimeVal diff = ed - st;
-	// cout << diff.toSeconds() << "\n";
-	// cout << diff.toMillSeconds() << "\n";
-	// cout << diff.toMicroSeconds() << "\n";
+	// sleeptime = 1;
+	// if(argc >= 3) {
+	// 	sleeptime = atoi(argv[2]);
+	// }
+	// usleep(sleeptime MS);
+	// cout << _time.costTime() << "\n";
+
+	// _time.reset();
+	// usleep(sleeptime MS);
+	// cout << _time.costTime() << "\n";
+
 	// return 0;
 
 	string str;

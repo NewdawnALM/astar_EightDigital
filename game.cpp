@@ -58,7 +58,7 @@ vector<CChess> CGame::getNextChess(const CChess &nowChess)
 
 void CGame::run()
 {
-	CTimeVal st;
+	CTimeVal _time;
 
 	set<CChess> setChess;
 	setChess.insert(m_startChess);
@@ -94,7 +94,5 @@ void CGame::run()
 		}
 	}
 
-	CTimeVal ed;
-	CTimeVal diff = ed - st;
-	lRunTime = diff.toMillSeconds();
+	lRunTime = _time.costTime();
 }

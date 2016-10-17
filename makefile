@@ -1,20 +1,23 @@
 CC = g++
 COMOPT = -std=c++11
 
-output := game
+INCLUDEDIR = -I./tools
 
-all: $(output)
+LIBDIR = -L./tools
+LIBS = -ltools
+LINK = $(LIBDIR) $(LIBS)
 
-game: main.o libgame.a
-	$(CC) -o $@ $^
+OUTPUT := game
 
-libgame.a: game.o chess.o
-	ar -surv $@ $^
+all: $(OUTPUT)
+
+game: main.o
+	make -C tools
+	$(CC) -o $@ $^ $(LINK)
 
 %.o: %.cpp
-	$(CC) -o $@ -c $< $(COMOPT)
+	$(CC) -o $@ -c $< $(COMOPT) $(INCLUDEDIR)
 
 clean:
 	rm -f *.o
-	rm -f *.a
-	rm -f $(output)
+	rm -f $(OUTPUT)
