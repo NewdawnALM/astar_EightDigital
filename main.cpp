@@ -7,32 +7,8 @@
 #include <iostream>
 using namespace std;
 
-#define  MS  *1000
-
 int main(int argc, char const *argv[])
 {
-	// int sleeptime = 1;
-	// if(argc >= 2) {
-	// 	sleeptime = atoi(argv[1]);
-	// }
-
-	// CTimeVal _time;
-	// usleep(sleeptime MS);
-	// cout << _time.costTime(CTimeVal::MICRO) << "\n";
-
-	// sleeptime = 1;
-	// if(argc >= 3) {
-	// 	sleeptime = atoi(argv[2]);
-	// }
-	// usleep(sleeptime MS);
-	// cout << _time.costTime() << "\n";
-
-	// _time.reset();
-	// usleep(sleeptime MS);
-	// cout << _time.costTime() << "\n";
-
-	// return 0;
-
 	string str;
 	int r, c;
 	while(true) {
@@ -47,6 +23,8 @@ int main(int argc, char const *argv[])
 				break;
 			}
 			CChess end(str, r, c);
+			start.setStrStandard(str);
+
 			cout << "Your game is:\n" << start << " --->\n" << end << "\n";
 
 			CGame game(start, end);

@@ -14,5 +14,5 @@ $(OUTPUT): $(OBJS)
 	$(CC) $(COMOPT) -o $@ -c $<
 
 clean:
-	rm -f $(OBJS)
+	rm -f *.o
 	rm -f $(OUTPUT)

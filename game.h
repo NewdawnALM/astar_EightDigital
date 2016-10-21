@@ -2,13 +2,14 @@
 #define  __GAME_H
 
 #include "chess.h"
+#include <set>
+using std::set;
 
 class CGame
 {
 public:
 	CGame(const CChess &_start, const CChess &_end);
-	static vector<CChess> getNextChess(const CChess &nowChess);
-	static vector<CChess> getStateByStartAndSteps(const CChess &start, int steps);
+	static set<CChess> getStateByStartAndSteps(const CChess &start, int steps);
 	void run();
 
 	const CChess m_startChess, m_endChess;

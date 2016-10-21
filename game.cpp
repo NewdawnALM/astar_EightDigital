@@ -4,25 +4,28 @@
 #include <set>
 #include <queue>
 #include <algorithm>
+#include <cstdlib>
+#include <functional>
 using std::set;
 using std::queue;
 using std::priority_queue;
 using std::swap;
 using std::max;
 using std::sort;
+using std::function;
 
 CGame::CGame(const CChess &_start, const CChess &_end): m_startChess(_start),
 	m_endChess(_end), bCanSolve(false), iSteps(0), vecSolve{},
 	iMaxStates(0), lRunTime(0)
 {
-	if(m_startChess.iRow != m_endChess.iRow) {
-		throw CException(2001, "开始字符串和结束字符串的行不相同！");
-	}
-	if(m_startChess.iCol != m_endChess.iCol) {
-		throw CException(2002, "开始字符串和结束字符串的列不相同！");
-	}
-	auto tmp_start = m_startChess.strState;
-	auto tmp_end = m_endChess.strState;
+	// if(m_startChess.iRow != m_endChess.iRow) {
+	// 	throw CException(2001, "开始字符串和结束字符串的行不相同！");
+	// }
+	// if(m_startChess.iCol != m_endChess.iCol) {
+	// 	throw CException(2002, "开始字符串和结束字符串的列不相同！");
+	// }
+	auto tmp_start = m_startChess.getStrState();
+	auto tmp_end = m_endChess.getStrState();
 	sort(tmp_start.begin(), tmp_start.end());
 	sort(tmp_end.begin(), tmp_end.end());
 	if(tmp_start != tmp_end) {
@@ -30,48 +33,33 @@ CGame::CGame(const CChess &_start, const CChess &_end): m_startChess(_start),
 	}
 }
 
-vector<CChess> CGame::getNextChess(const CChess &nowChess)
+set<CChess> CGame::getStateByStartAndSteps(const CChess &start, int steps)
 {
-	vector<CChess> nextChess;
-	const int zeroIdx = nowChess.iZeroIdx;
-	// 0可以和上面的数字进行交换
-	if(zeroIdx >= nowChess.iCol) {
-		CChess up(nowChess);
-		swap(up.strState[zeroIdx - up.iCol], up.strState[zeroIdx]);
-		up.iZeroIdx -= up.iCol;
-		++up.iSteps;
-		up.pparent = const_cast<CChess*>(&nowChess);
-		up.iMoveFromLast = CChess::DOWN;
-		nextChess.push_back(up);
+	set<CChess> retSet;
+	set<CChess> inSet;
+	inSet.insert(start);
+	queue<CChess> queChess;
+	queChess.push(start);
+	while(!queChess.empty()) {
+		CChess curChess = queChess.front();
+		queChess.pop();
+		if(curChess.iSteps > steps) {
+			continue;
+		}
+		if(curChess.iSteps == steps) {
+			retSet.insert(curChess);
+			continue;
+		}
+		auto nextChess = curChess.getNextState();
+		int len = nextChess.size();
+		for(int i = 0; i < len; ++i) {
+			if(inSet.find(nextChess[i]) == inSet.end()) {
+				queChess.push(nextChess[i]);
+				inSet.insert(nextChess[i]);
+			}
+		}
 	}
-	if(zeroIdx < nowChess.strState.size() - nowChess.iCol) {
-		CChess down(nowChess);
-		swap(down.strState[zeroIdx + down.iCol], down.strState[zeroIdx]);
-		down.iZeroIdx += down.iCol;
-		++down.iSteps;
-		down.pparent = const_cast<CChess*>(&nowChess);
-		down.iMoveFromLast = CChess::UP;
-		nextChess.push_back(down);
-	}
-	if(zeroIdx % nowChess.iCol != 0) {
-		CChess left(nowChess);
-		swap(left.strState[zeroIdx - 1], left.strState[zeroIdx]);
-		--left.iZeroIdx;
-		++left.iSteps;
-		left.pparent = const_cast<CChess*>(&nowChess);
-		left.iMoveFromLast = CChess::RIGHT;
-		nextChess.push_back(left);
-	}
-	if((zeroIdx + 1) % nowChess.iCol != 0) {
-		CChess right(nowChess);
-		swap(right.strState[zeroIdx + 1], right.strState[zeroIdx]);
-		++right.iZeroIdx;
-		++right.iSteps;
-		right.pparent = const_cast<CChess*>(&nowChess);
-		right.iMoveFromLast = CChess::LEFT;
-		nextChess.push_back(right);
-	}
-	return nextChess;
+	return retSet;
 }
 
 struct priority_chess
@@ -106,7 +94,7 @@ void CGame::run()
 			}
 			break;
 		}
-		vector<CChess> nextChess = CGame::getNextChess(nowChess);
+		vector<CChess> nextChess = nowChess.getNextState();
 		int len = nextChess.size();
 		for(int i = 0; i < len; ++i) {
 			auto chess_it = setChess.find(nextChess[i]);
@@ -126,6 +114,6 @@ void CGame::run()
 			break ;
 		}
 	}
-
 	lRunTime = _time.costTime();
 }
+
