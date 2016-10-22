@@ -1,6 +1,7 @@
 #ifndef  __CCHESS_H
 #define  __CCHESS_H
 
+#include "state.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,23 +10,23 @@ using std::vector;
 using std::ostream;
 
 
-class CChess
+class CChess: public CState
 {
     friend ostream& operator << (ostream &, const CChess &);
     static int iLimitNum;
 public:
     CChess(const string &state, int row, int col, const string &standard="");
 
-    bool operator < (const CChess &rhs) const;
-    bool operator == (const CChess &rhs) const;
+    virtual bool operator < (const CState &) const;
+    virtual void checkSomeFields(const CState &) const;
 
     const string& getStrState() const;
     void setStrStandard(const string &);
-    vector<CChess> getNextState() const;
+    virtual vector<CState*> getNextState() const;
 
-    int astar_f() const;
-    int astar_g() const;
-    int astar_h() const;
+    virtual size_t astar_f() const;
+    virtual size_t astar_g() const;
+    virtual size_t astar_h() const;
 
 private:
     void check_row_col() const;
@@ -42,16 +43,12 @@ private:
     int iNotMatch;
 
 public:
-    int iSteps;
-    const CChess *pparent;      // 必须指向实实际际存在的值！注意不要指向一个局部变量等！
     int iMoveFromLast;
-
     static const string directs[5];
     enum DIRECT
     {
         UP, DOWN, LEFT, RIGHT, UNKOWN
     };
-
     void output(ostream &out, const string &colSpace=" ", const string &rowSpace="\n") const;
 };
 

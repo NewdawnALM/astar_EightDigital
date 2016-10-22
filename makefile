@@ -8,7 +8,7 @@ LIBS = -ltools
 LINK = $(LIBDIR) $(LIBS)
 
 # OBJS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
-OBJS += chess.o game.o
+OBJS += chess.o astar.o state.o
 
 OUTPUT += game rand_init
 

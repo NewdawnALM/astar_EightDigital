@@ -65,7 +65,7 @@ void CChess::check_standard() const
 }
 
 CChess::CChess(const string &state, int row, int col, const string &standard):
-    strState(state), iRow(row), iCol(col), iSteps(0), pparent(NULL),
+    strState(state), iRow(row), iCol(col), CState(),
     iMoveFromLast(UNKOWN), strStandard(standard)
 {
     check_row_col();
@@ -79,14 +79,34 @@ CChess::CChess(const string &state, int row, int col, const string &standard):
     iNotMatch = countNotMatch();
 }
 
-bool CChess::operator < (const CChess &rhs) const
+void CChess::checkSomeFields(const CState &rhs) const
 {
-    return strState < rhs.strState;
+    if(iRow != ((CChess*)&rhs)->iRow) {
+        throw CException(2001, "开始字符串和结束字符串的行不相同！");
+    }
+    if(iCol != ((CChess*)&rhs)->iCol) {
+        throw CException(2002, "开始字符串和结束字符串的列不相同！");
+    }
+    auto tmp_this = strState;
+    auto tmp_rhs = ((CChess*)&rhs)->strState;
+    sort(tmp_this.begin(), tmp_this.end());
+    sort(tmp_rhs.begin(), tmp_rhs.end());
+    if(tmp_this != tmp_rhs) {
+        throw CException(2003, "开始字符串和结束字符串含有的字符有差别！");
+    }
 }
 
-bool CChess::operator == (const CChess &rhs) const
+bool CChess::operator < (const CState &rhs) const
 {
-    return iRow == rhs.iRow && iCol == rhs.iCol && strState == rhs.strState;
+    const auto &r_str = ((CChess*)&rhs)->strState;
+    int cmp = strcmp(strState.c_str(), r_str.c_str());
+    const auto &r_row = ((CChess*)&rhs)->iRow;
+    const auto &r_col = ((CChess*)&rhs)->iCol;
+    if(cmp == 0) {
+        if(iRow == r_row)   return iCol < r_col;
+        return iRow < r_row;
+    }
+    return cmp < 0;
 }
 
 const string& CChess::getStrState() const
@@ -133,68 +153,64 @@ int CChess::countLocalNotMatch(int one, int two) const
     return this->iNotMatch - oldNotMatch + nowNotMatch;
 }
 
-vector<CChess> CChess::getNextState() const
+vector<CState*> CChess::getNextState() const
 {
-    vector<CChess> nextChess;
+    vector<CState*> nextChess;
     // 0上面存在数字，可以下移
     if(iZeroIdx >= iCol) {
-        CChess down(*this);
-        swap(down.strState[iZeroIdx - iCol], down.strState[iZeroIdx]);
-        down.iNotMatch = down.countLocalNotMatch(iZeroIdx - iCol, iZeroIdx);
-        // down.iNotMatch = down.countNotMatch();
-        down.iZeroIdx -= iCol;
-        ++down.iSteps;
-        down.pparent = this;
-        down.iMoveFromLast = CChess::DOWN;
+        CChess *down = new CChess(*this);
+        swap(down->strState[iZeroIdx - iCol], down->strState[iZeroIdx]);
+        down->iNotMatch = down->countLocalNotMatch(iZeroIdx - iCol, iZeroIdx);
+        down->iZeroIdx -= iCol;
+        down->iSteps++;
+        down->pparent = this;
+        down->iMoveFromLast = CChess::DOWN;
         nextChess.push_back(down);
     }
     if(iZeroIdx < strState.size() - iCol) {
-        CChess up(*this);
-        swap(up.strState[iZeroIdx + iCol], up.strState[iZeroIdx]);
-        up.iNotMatch = up.countLocalNotMatch(iZeroIdx + iCol, iZeroIdx);
-        // up.iNotMatch = up.countNotMatch(); 
-        up.iZeroIdx += iCol;
-        ++up.iSteps;
-        up.pparent = this;
-        up.iMoveFromLast = CChess::UP;
+        CChess *up = new CChess(*this);
+        swap(up->strState[iZeroIdx + iCol], up->strState[iZeroIdx]);
+        up->iNotMatch = up->countLocalNotMatch(iZeroIdx + iCol, iZeroIdx);
+        up->iZeroIdx += iCol;
+        ++up->iSteps;
+        up->pparent = this;
+        up->iMoveFromLast = CChess::UP;
         nextChess.push_back(up);
     }
     if(iZeroIdx % iCol != 0) {
-        CChess right(*this);
-        swap(right.strState[iZeroIdx - 1], right.strState[iZeroIdx]);
-        right.iNotMatch = right.countLocalNotMatch(iZeroIdx - 1, iZeroIdx);
-        // right.iNotMatch = right.countNotMatch();
-        --right.iZeroIdx;
-        ++right.iSteps;
-        right.pparent = this;
-        right.iMoveFromLast = CChess::RIGHT;
+        CChess *right = new CChess(*this);
+        swap(right->strState[iZeroIdx - 1], right->strState[iZeroIdx]);
+        right->iNotMatch = right->countLocalNotMatch(iZeroIdx - 1, iZeroIdx);
+        --right->iZeroIdx;
+        ++right->iSteps;
+        right->pparent = this;
+        right->iMoveFromLast = CChess::RIGHT;
         nextChess.push_back(right);
     }
     if((iZeroIdx + 1) % iCol != 0) {
-        CChess left(*this);
-        swap(left.strState[iZeroIdx + 1], left.strState[iZeroIdx]);
-        left.iNotMatch = left.countLocalNotMatch(iZeroIdx + 1, iZeroIdx);
-        // left.iNotMatch = left.countNotMatch();
-        ++left.iZeroIdx;
-        ++left.iSteps;
-        left.pparent = this;
-        left.iMoveFromLast = CChess::LEFT;
+        CChess *left = new CChess(*this);
+        swap(left->strState[iZeroIdx + 1], left->strState[iZeroIdx]);
+        left->iNotMatch = left->countLocalNotMatch(iZeroIdx + 1, iZeroIdx);
+        ++left->iZeroIdx;
+        ++left->iSteps;
+        left->pparent = this;
+        left->iMoveFromLast = CChess::LEFT;
         nextChess.push_back(left);
     }
     return nextChess;
 }
 
-int CChess::astar_f() const
+size_t CChess::astar_f() const
 {
     return iSteps;
 }
 
-int CChess::astar_g() const
+size_t CChess::astar_g() const
 {
     return iNotMatch;
 }
 
-int CChess::astar_h() const
+size_t CChess::astar_h() const
 {
     return astar_f() + astar_g();
 }
