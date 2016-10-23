@@ -31,11 +31,6 @@ struct CPointerComp
 	}
 };
 
-
-#include <iostream>
-using std::cin;
-using std::cout;
-
 set<const CState*> CAstar::getStateByStartAndSteps(const CState &start, int steps)
 {
 	set<const CState*> retSet;
