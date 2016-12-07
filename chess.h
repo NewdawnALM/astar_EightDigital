@@ -23,10 +23,9 @@ public:
     const string& getStrState() const;
     void setStrStandard(const string &);
     virtual vector<CState*> getNextState() const;
-
-    virtual size_t astar_f() const;
+    // virtual size_t astar_f() const;
     virtual size_t astar_g() const;
-    virtual size_t astar_h() const;
+    // virtual size_t astar_h() const;
 
 private:
     void check_row_col() const;

@@ -12,9 +12,10 @@ public:
 	virtual bool operator < (const CState &) const=0;
 	virtual void checkSomeFields(const CState &) const;
 	virtual vector<CState*> getNextState() const=0;
-	virtual size_t astar_f() const=0;
+	vector<CState*> __getNextState() const;		// call the function getNextState and deal with iSteps and pparent
+	virtual size_t astar_f() const;
 	virtual size_t astar_g() const=0;
-	virtual size_t astar_h() const=0;
+	virtual size_t astar_h() const;
 	virtual ~CState();
 
 	int iSteps;

@@ -48,7 +48,7 @@ set<const CState*> CAstar::getStateByStartAndSteps(const CState &start, int step
 			retSet.insert(pCurState);
 			continue;
 		}
-		auto nextState = pCurState->getNextState();
+		auto nextState = pCurState->__getNextState();
 		int len = nextState.size();
 		For(i, 0, len) {
 			if(inSet.find(nextState[i]) == inSet.end()) {
@@ -85,7 +85,8 @@ void CAstar::run()
 	queState.push(&m_rStart);
 
 	while(!queState.empty()) {
-		auto pHeadState = *(setState.find(queState.top()));
+		// auto pHeadState = *(setState.find(queState.top()));
+		auto pHeadState = queState.top();
 		queState.pop();
 		if(!(*pHeadState < m_rEnd) && !(m_rEnd < *pHeadState)) {
 			bCanSolve = true;
@@ -98,7 +99,7 @@ void CAstar::run()
 			}
 			break;
 		}
-		vector<CState*> nextState = pHeadState->getNextState();
+		vector<CState*> nextState = pHeadState->__getNextState();
 		int len = nextState.size();
 		for(int i = 0; i < len; ++i) {
 			auto state_it = setState.find(nextState[i]);
@@ -113,11 +114,11 @@ void CAstar::run()
 				}
 			}
 		}
-		iTotalStates = max(iTotalStates, int(setState.size()));
-		if(iTotalStates > 300 * 10000) {
+		if(setState.size() > 600 * 10000) {
 			break ;
 		}
 	}
+	iTotalStates = setState.size();
 	lRunTime = _time.costTime();
 	setState.erase(&m_rStart);
 	For(vec_it, vecSolve.begin(), vecSolve.end()) {

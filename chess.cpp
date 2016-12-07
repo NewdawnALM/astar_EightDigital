@@ -4,7 +4,7 @@
 #include <algorithm>
 using std::sort;
 using std::swap;
-#define  For(i,s,t)  for(auto i = (s); i < (t); ++i)
+#define  For(i,s,t)  for(auto i = (s); i != (t); ++i)
 
 int CChess::iLimitNum = 20;
 const string CChess::directs[5] = {"up", "down", "left", "right", "unkown"};
@@ -162,8 +162,6 @@ vector<CState*> CChess::getNextState() const
         swap(down->strState[iZeroIdx - iCol], down->strState[iZeroIdx]);
         down->iNotMatch = down->countLocalNotMatch(iZeroIdx - iCol, iZeroIdx);
         down->iZeroIdx -= iCol;
-        down->iSteps++;
-        down->pparent = this;
         down->iMoveFromLast = CChess::DOWN;
         nextChess.push_back(down);
     }
@@ -172,8 +170,6 @@ vector<CState*> CChess::getNextState() const
         swap(up->strState[iZeroIdx + iCol], up->strState[iZeroIdx]);
         up->iNotMatch = up->countLocalNotMatch(iZeroIdx + iCol, iZeroIdx);
         up->iZeroIdx += iCol;
-        ++up->iSteps;
-        up->pparent = this;
         up->iMoveFromLast = CChess::UP;
         nextChess.push_back(up);
     }
@@ -182,8 +178,6 @@ vector<CState*> CChess::getNextState() const
         swap(right->strState[iZeroIdx - 1], right->strState[iZeroIdx]);
         right->iNotMatch = right->countLocalNotMatch(iZeroIdx - 1, iZeroIdx);
         --right->iZeroIdx;
-        ++right->iSteps;
-        right->pparent = this;
         right->iMoveFromLast = CChess::RIGHT;
         nextChess.push_back(right);
     }
@@ -192,27 +186,15 @@ vector<CState*> CChess::getNextState() const
         swap(left->strState[iZeroIdx + 1], left->strState[iZeroIdx]);
         left->iNotMatch = left->countLocalNotMatch(iZeroIdx + 1, iZeroIdx);
         ++left->iZeroIdx;
-        ++left->iSteps;
-        left->pparent = this;
         left->iMoveFromLast = CChess::LEFT;
         nextChess.push_back(left);
     }
     return nextChess;
 }
 
-size_t CChess::astar_f() const
-{
-    return iSteps;
-}
-
 size_t CChess::astar_g() const
 {
     return iNotMatch;
-}
-
-size_t CChess::astar_h() const
-{
-    return astar_f() + astar_g();
 }
 
 void CChess::output(ostream &out, const string &colSpace, const string &rowSpace) const
