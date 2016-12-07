@@ -192,7 +192,7 @@ vector<CState*> CChess::getNextState() const
     return nextChess;
 }
 
-size_t CChess::astar_g() const
+long CChess::astar_g() const
 {
     return iNotMatch;
 }

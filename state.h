@@ -13,9 +13,9 @@ public:
 	virtual void checkSomeFields(const CState &) const;
 	virtual vector<CState*> getNextState() const=0;
 	vector<CState*> __getNextState() const;		// call the function getNextState and deal with iSteps and pparent
-	virtual size_t astar_f() const;
-	virtual size_t astar_g() const=0;
-	virtual size_t astar_h() const;
+	virtual long astar_f() const;
+	virtual long astar_g() const=0;		// g函数的值越小，优先级就越高，f()和h()函数类似
+	virtual long astar_h() const;
 	virtual ~CState();
 
 	int iSteps;

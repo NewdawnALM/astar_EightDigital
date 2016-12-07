@@ -16,12 +16,12 @@ vector<CState*> CState::__getNextState() const
 	return nextState;
 }
 
-size_t CState::astar_f() const
+long CState::astar_f() const
 {
 	return iSteps;
 }
 
-size_t CState::astar_h() const
+long CState::astar_h() const
 {
 	return astar_f() + astar_g();
 }
