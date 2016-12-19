@@ -54,6 +54,8 @@ set<const CState*> CAstar::getStateByStartAndSteps(const CState &start, int step
 			if(inSet.find(nextState[i]) == inSet.end()) {
 				queState.push(nextState[i]);
 				inSet.insert(nextState[i]);
+			} else {
+				delete nextState[i];
 			}
 		}
 	}
@@ -111,6 +113,8 @@ void CAstar::run()
 					setState.erase(state_it);
 					setState.insert(nextState[i]);
 					queState.push(nextState[i]);
+				} else {
+					delete nextState[i];
 				}
 			}
 		}
