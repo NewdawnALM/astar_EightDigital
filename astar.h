@@ -19,6 +19,8 @@ public:
 	vector<const CState*> vecSolve;
 	long lRunTime;
 	int iTotalStates;
+private:
+	set<const CState*> pointerWaitToDelete;
 };
 
 #endif

@@ -17,7 +17,7 @@ using std::function;
 
 CAstar::CAstar(const CState &_start, const CState &_end):
 	m_rStart(_start), m_rEnd(_end), bCanSolve(false), iSteps(0), vecSolve{},
-	iTotalStates(0), lRunTime(0)
+	iTotalStates(0), lRunTime(0), pointerWaitToDelete{}
 {
 	m_rStart.checkSomeFields(m_rEnd);
 }
@@ -103,6 +103,7 @@ void CAstar::run()
 		}
 		vector<CState*> nextState = pHeadState->__getNextState();
 		int len = nextState.size();
+
 		for(int i = 0; i < len; ++i) {
 			auto state_it = setState.find(nextState[i]);
 			if(state_it == setState.end()) {
@@ -110,6 +111,7 @@ void CAstar::run()
 				setState.insert(nextState[i]);
 			} else {
 				if((*state_it)->astar_f() > nextState[i]->astar_f()) {
+					pointerWaitToDelete.insert(*state_it);		// 这一句要放在setState.erase前面，防止迭代器失效
 					setState.erase(state_it);
 					setState.insert(nextState[i]);
 					queState.push(nextState[i]);
@@ -139,5 +141,8 @@ CAstar::~CAstar()
 		if(*vec_it != &m_rStart && *vec_it != &m_rEnd) {
 			delete *vec_it;
 		}
+	}
+	for(const auto &pState: pointerWaitToDelete) {
+		delete pState;
 	}
 }
