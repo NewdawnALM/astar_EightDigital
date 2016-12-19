@@ -1,5 +1,5 @@
 CC = g++
-COMOPT = -std=c++11
+COMOPT = -std=c++11 -g
 
 INCLUDEDIR = -I./tools
 
