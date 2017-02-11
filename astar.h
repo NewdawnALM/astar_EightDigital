@@ -13,13 +13,13 @@ public:
 	void run();
 	~CAstar();
 
-	const CState &m_rStart, &m_rEnd;
 	bool bCanSolve;
 	int iSteps;
 	vector<const CState*> vecSolve;
 	long lRunTime;
 	int iTotalStates;
 private:
+	const CState &m_rStart, &m_rEnd;
 	set<const CState*> pointerWaitToDelete;
 };
 

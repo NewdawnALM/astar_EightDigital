@@ -4,10 +4,12 @@
 #include <sys/time.h>
 #include <iostream>
 using std::ostream;
+#include "types.h"
 
 class CTimeVal
 {
     friend ostream& operator << (ostream &, const CTimeVal &);
+    typedef ALM::types::int64 int64;
 public:
     CTimeVal();
     CTimeVal(const timeval &_tv);
@@ -17,17 +19,17 @@ public:
     CTimeVal operator - (const CTimeVal &rhs) const;
     /**
      * [costTime description]
-     * @return return the cost time(millsecond in default).
+     * @return return the cost time(millisecond in default).
      */
-    long long costTime(int type=MILL) const;
+    int64 costTime(int type=MILL) const;
     /**
      * reset the time with this moment.
      */
     void reset();
 
-    long long toSeconds() const;
-    long long toMillSeconds() const;
-    long long toMicroSeconds() const;
+    int64 toSeconds() const;
+    int64 toMilliSeconds() const;
+    int64 toMicroSeconds() const;
 
     enum TIMETYPE
     {

@@ -42,7 +42,8 @@ set<const CState*> CAstar::getStateByStartAndSteps(const CState &start, int step
 		const CState* const pCurState = queState.front();
 		queState.pop();
 		if(pCurState->iSteps > steps) {
-			continue;
+			// continue;
+			break;
 		}
 		if(pCurState->iSteps == steps) {
 			retSet.insert(pCurState);

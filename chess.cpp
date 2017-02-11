@@ -6,7 +6,7 @@ using std::sort;
 using std::swap;
 #define  For(i,s,t)  for(auto i = (s); i != (t); ++i)
 
-int CChess::iLimitNum = 20;
+int CChess::iLimitNum = 25;
 const string CChess::directs[5] = {"up", "down", "left", "right", "unkown"};
 
 void CChess::check_row_col() const
