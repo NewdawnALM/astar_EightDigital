@@ -17,7 +17,7 @@ public:
     CTimeVal operator - (const CTimeVal &rhs) const;
     /**
      * [costTime description]
-     * @return return the cost time(millsecond in default).
+     * @return return the cost time(millisecond in default).
      */
     long long costTime(int type=MILL) const;
     /**
@@ -26,7 +26,7 @@ public:
     void reset();
 
     long long toSeconds() const;
-    long long toMillSeconds() const;
+    long long toMilliSeconds() const;
     long long toMicroSeconds() const;
 
     enum TIMETYPE

@@ -52,7 +52,7 @@ CTimeVal CTimeVal::operator - (const CTimeVal &rhs) const
 
 /**
  * [costTime description]
- * @return return the cost time(millsecond in default).
+ * @return return the cost time(millisecond in default).
  */
 long long CTimeVal::costTime(int type) const
 {
@@ -62,7 +62,7 @@ long long CTimeVal::costTime(int type) const
     } else if(type == MICRO) {
         return diff.toMicroSeconds();
     } else {
-        return diff.toMillSeconds();
+        return diff.toMilliSeconds();
     }
 }
 
@@ -79,7 +79,7 @@ long long CTimeVal::toSeconds() const
 	return tv.tv_sec;
 }
 
-long long CTimeVal::toMillSeconds() const
+long long CTimeVal::toMilliSeconds() const
 {
 	return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
